@@ -4,7 +4,7 @@ import RestaurantCard from "./RestaurantCard";
 const RestaurantList = ({ topThree, remaining, onShowMore }) => {
   return (
     <div>
-      <h2>Top 3 Restaurants</h2>
+      <h2>Closest Picks</h2>
       <div className="restaurant-list">
         {topThree.map((restaurant, index) => (
           <RestaurantCard key={index} restaurant={restaurant} />

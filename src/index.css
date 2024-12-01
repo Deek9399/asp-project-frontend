@@ -12,38 +12,39 @@ code {
     monospace;
 }
 
-.restaurant-card {
+/* .restaurant-card {
   border: 1px solid #ddd;
   padding: 10px;
   margin: 10px;
   border-radius: 8px;
   padding: 10px;
-}
+} */
 
 .restaurant-list {
   display: flex;
   flex-wrap: wrap;
+  gap: 20px;
 }
 
-button {
+/* button {
   padding: 10px;
   background-color: #2c3e50;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
+} */
 
-form {
+/* form {
   margin: 20px;
   padding: 20px;
   border-radius: 8px;
   background-color: #f4f4f4;
-}
+} */
 
-input,
+/* input,
 button {
   margin: 10px 0;
   padding: 10px;
   width: 100%;
-}
+} */
