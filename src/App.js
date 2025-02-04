@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchForm from "./components/SearchForm";
 import RestaurantList from "./components/RestaurantList";
 import backgroundImage from "./assets/background2.png";
+import restaurants from "./assets/restaurants";
+import axios from "axios";
 
 const App = () => {
-  const [restaurants, setRestaurants] = useState({
-    topThree: [],
-    remaining: [],
-  });
+  const [restaurantData, setRestaurantData] = useState();
+  const [isSearchSubmitted, setIsSearchSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const mainApp = {
     display: "flex",
@@ -16,7 +17,7 @@ const App = () => {
     justifyContent: "center",
     // backgroundImage: `url(${backgroundImage})`,
     backgroundImage: `
-    linear-gradient(to bottom, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 1)), 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 1)),
     url(${backgroundImage})`,
     backgroundSize: "cover",
     // backgroundPosition: "center", // Centers the image
@@ -24,114 +25,100 @@ const App = () => {
     zIndex: -1,
     width: "100%",
     height: "50vw",
-    overflow: "hidden",
+    //overflow: "hidden",
     color: "fff",
     gap: 10,
   };
+  const restaurantList = {
+    paddingTop: "10px",
+  };
 
-  // const handleSearchSubmit = async ({ location, seats, walkingTime }) => {
-  //   try {
-  //     // Replace this URL with the actual API endpoint
-  //     const response = await axios.post("https://api.example.com/AvailableRestaurants", {
-  //       Location: {
-  //         Long: location.lng, // Assuming location is passed as an object with lng and lat properties
-  //         Latitude: location.lat,
-  //       },
-  //       Seats: seats,
-  //       Walking_time_range: walkingTime,
-  //       Key_words: ["vegan", "outdoor seating"], // Customize your keywords as needed
+  const handleSearchSubmitAPI = async ({
+    latitude,
+    longitude,
+    seats,
+    walkingTime,
+  }) => {
+    setIsLoading(true);
+    try {
+      console.log("4444444444", seats, "     ", walkingTime);
+      // Replace this URL with the actual API endpoint
+      const response = await axios.post(
+        "https://dx4bc5jy35.execute-api.us-east-1.amazonaws.com/default/AvailableRestaurants",
+        {
+          Location: {
+            longitude: longitude, // Assuming location is passed as an object with lng and lat properties
+            latitude: latitude,
+          },
+          Seats: Number(seats),
+          Walking_time_range: Number(walkingTime),
+
+          // Key_words: [], // Customize your keywords as needed
+        }
+      );
+
+      const data = JSON.parse(response.data);
+
+      console.log("33333", data);
+
+      setRestaurantData(data);
+      setIsSearchSubmitted(true);
+      const restaurantListElement = document.getElementById("restaurant-list");
+      if (!isLoading && restaurantData) {
+        console.log("Scrollllllllllllllll");
+        restaurantListElement.scrollIntoView({
+          behavior: "smooth", // Smooth scroll animation
+          block: "start", // Align to the top of the element
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching restaurant data:", error);
+    } finally {
+      setIsLoading(false); // Stop loading indicator
+    }
+  };
+  // const handleSearchSubmit = ({ location, seats, walkingTime }) => {
+  //   setRestaurantData(restaurants);
+  //   setIsSearchSubmitted(true);
+  //   // Scroll to the RestaurantList component using the id
+  //   const restaurantListElement = document.getElementById("restaurant-list");
+  //   if (restaurantListElement) {
+  //     restaurantListElement.scrollIntoView({
+  //       behavior: "smooth",
+  //       block: "start",
   //     });
-
-  //     const data = response.data;
-
-  //     setRestaurants({
-  //       topThree: Object.entries(data.Top_three).map(([name, data]) => ({
-  //         name,
-  //         ...data,
-  //       })),
-  //       remaining: Object.entries(data.Remaining_restaurants).map(
-  //         ([name, data]) => ({ name, ...data })
-  //       ),
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching restaurant data:", error);
   //   }
   // };
-  const handleSearchSubmit = ({ location, seats, walkingTime }) => {
-    // Simulated backend response with dummy data
-    const dummyData = {
-      Top_three: {
-        "Restaurant 1": {
-          Phone_number: 1234567890,
-          address: "123 Main Street",
-          Resy_link: "https://resy.com/restaurant1",
-          imgs: "https://via.placeholder.com/100",
-          Available_time: "6:00 PM",
-          Travel_time: "10 mins",
-        },
-        "Restaurant 2": {
-          Phone_number: 9876543210,
-          address: "456 Elm Street",
-          Resy_link: "https://resy.com/restaurant2",
-          imgs: "https://via.placeholder.com/100",
-          Available_time: "7:00 PM",
-          Travel_time: "15 mins",
-        },
-        "Restaurant 3": {
-          Phone_number: 5555555555,
-          address: "789 Oak Avenue",
-          Resy_link: "https://resy.com/restaurant3",
-          imgs: "https://via.placeholder.com/100",
-          Available_time: "8:00 PM",
-          Travel_time: "20 mins",
-        },
-      },
-      Remaining_restaurants: {
-        "Restaurant 4": {
-          Phone_number: 4444444444,
-          address: "111 Pine Lane",
-          Resy_link: "https://resy.com/restaurant4",
-          imgs: "https://via.placeholder.com/100",
-          Available_time: "9:00 PM",
-          Travel_time: "25 mins",
-        },
-        "Restaurant 5": {
-          Phone_number: 3333333333,
-          address: "222 Maple Court",
-          Resy_link: "https://resy.com/restaurant5",
-          imgs: "https://via.placeholder.com/100",
-          Available_time: "10:00 PM",
-          Travel_time: "30 mins",
-        },
-      },
-    };
-
-    setRestaurants({
-      topThree: Object.entries(dummyData.Top_three).map(([name, data]) => ({
-        name,
-        ...data,
-      })),
-      remaining: Object.entries(dummyData.Remaining_restaurants).map(
-        ([name, data]) => ({ name, ...data })
-      ),
-    });
-  };
-
-  const handleShowMore = () => {
-    // Handle showing more restaurants logic, e.g., toggling visibility of the "remaining" list
-  };
+  useEffect(() => {
+    if (isSearchSubmitted && restaurantData && !isLoading) {
+      const restaurantListElement = document.getElementById("restaurant-list");
+      if (restaurantListElement) {
+        restaurantListElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+  }, [isSearchSubmitted, restaurantData, isLoading]);
 
   return (
     <div>
       <div style={mainApp}>
-        <SearchForm onSubmit={handleSearchSubmit} />
+        <SearchForm onSubmit={handleSearchSubmitAPI} />
       </div>
 
-      <RestaurantList
-        topThree={restaurants.topThree}
-        remaining={restaurants.remaining}
-        onShowMore={handleShowMore}
-      />
+      {isLoading && (
+        <div style={{ textAlign: "center", marginTop: "-60px" }}>
+          <p>Loading restaurants...</p>
+        </div>
+      )}
+
+      {/* Render RestaurantList only if search is submitted */}
+      {isSearchSubmitted && !isLoading && (
+        <div id="restaurant-list" style={restaurantList}>
+          <RestaurantList restaurants={restaurantData ?? {}} />
+        </div>
+      )}
     </div>
   );
 };

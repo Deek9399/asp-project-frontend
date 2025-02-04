@@ -5,7 +5,7 @@ import "./SearchForm.css";
 const SearchForm = ({ onSubmit }) => {
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState();
   const [seats, setSeats] = useState();
   const [walkingTime, setWalkingTime] = useState();
 
@@ -13,7 +13,7 @@ const SearchForm = ({ onSubmit }) => {
     searchDiv: {
       display: "flex",
       flexDirection: "column",
-      alignItems: "cnter",
+      alignItems: "center",
       justifyContent: "center",
     },
     search: {
@@ -68,7 +68,7 @@ const SearchForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ location, seats, walkingTime });
+    onSubmit({ latitude, longitude, seats, walkingTime });
   };
 
   useEffect(() => {
@@ -92,7 +92,7 @@ const SearchForm = ({ onSubmit }) => {
     <div style={styles.searchDiv}>
       <form onSubmit={handleSubmit} style={styles.search}>
         <div style={styles.headingDiv}>
-          <h2 style={styles.heading}>Restaurant Reservation</h2>
+          <h2 style={styles.heading}>Booth Finder</h2>
           <span>
             Find your perfect dining spot in just a few clicks! Enter your
             location, seating needs, and travel time to uncover top restaurant
@@ -132,16 +132,16 @@ const SearchForm = ({ onSubmit }) => {
           placeholder="Number of Seats"
           type="number"
           value={seats}
-          onChange={(e) => setSeats(e.target.value)}
+          onChange={(e) => setSeats(parseInt(e.target.value, 10))}
           required
         />
 
         <input
-          placeholder="Walking Time"
+          placeholder="Travel Time"
           style={styles.input}
           type="number"
           value={walkingTime}
-          onChange={(e) => setWalkingTime(e.target.value)}
+          onChange={(e) => setWalkingTime(parseInt(e.target.value, 10))}
           required
         />
 
